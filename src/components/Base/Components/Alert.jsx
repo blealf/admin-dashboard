@@ -4,7 +4,8 @@ import styled from 'styled-components'
 const AlertWrapper = styled.button`
   padding: 5px;
   border: 1px solid red;
-  min-width: 
+  background: blue;
+  color: rgba()
 `
 const Alert = ({ message, color}) => {
   return (
