@@ -37,7 +37,6 @@ const Alert = ({ message, type, dismiss, timeout }) => {
   const [bgColor, setBgColor] = useState()
   const [duration] = useState(timeout || 6000)
   const context = useContext(ThemeContext)
-
   const alertRef = useRef()
 
   useEffect(() => {

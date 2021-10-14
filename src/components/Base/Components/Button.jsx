@@ -1,15 +1,15 @@
-import React, { useState, useEffect, Children } from 'react'
-import styled from 'styled-components'
+import React, { useState, useEffect } from 'react'
+import styled, { css } from 'styled-components'
 
 const Btn = styled.button`
   position: relative;
-  background: ${props => props.bgColor };
-  color: ${props => props.textColor };
-  padding: ${props => props.large ? "7px 11px" : "8px" };
-  border-radius: 3px;
-  outline: 0 !important;
-  border: none;
-  box-shadow: 3px 2px 5px 1px rgba(143, 136, 139, 0.5);
+  background: ${props => props.soft ? props.altColor : props.outlined ? "#FFF": props.bgColor };
+  color: ${props => props.soft ? props.bgColor : props.outlined ? props.bgColor: props.textColor };
+  padding: ${props => props.small ? "5px" : "10px" };
+  border-radius: ${props => props.rounded ? "40%" : "4px"};
+  outline: 0;
+  border: ${props => props.outlined ? "1px solid " + props.bgColor : "none"};;
+  box-shadow: ${props => !props.link && !props.soft && !props.outlined ? "3px 2px 5px 1px rgba(143, 136, 139, 0.5)" : "none" };
   margin-right: 5px;
   transition: 0.1s all;
 
@@ -25,24 +25,54 @@ const Btn = styled.button`
     bottom: 0;
   }
 
+  svg {
+    vertical-align: middle;
+    margin-right: 5px;
+    margin-left: 5px;
+    height: 1.1em;
+  }
   &:active {
     transform: scale(0.98);
     box-shadow: none;
   }
   &:hover:before {
     background: rgba(143, 136, 139, 0.3);
+  }
+  &:hover {
+    border: none;
     cursor: pointer;
+    ${props => props.link && css`
+      text-decoration: underline;
+    `}
+     ${props => (props.soft || props.outlined) && css`
+      background: ${props => props.bgColor };
+      color: ${props => props.textColor };
+    `
+    }
+  }
+
+  &:disabled, .disabled {
+    opacity: 0.5;
+    transform: none;
+    pointer-events: none;
+  }
+
+  a {
+    color: ${props => props.textColor };
+    text-decoration: none;
+    z-index: 2;
   }
 `
+console.log(css)
 
 const Button = (props) => {
 
   const [bgColor, setBgColor] = useState()
   const [textColor, setTextColor] = useState()
+  const [altColor, setAltColor] = useState()
 
   useEffect(() => {
     selectColor(props.type)
-    console.log(props)
   }, [props.type])
 
   const selectColor = (value) => {
@@ -50,18 +80,20 @@ const Button = (props) => {
       case 'primary':
         setBgColor('#5156BE')
         setTextColor('#FFFFFB')
+        setAltColor('#EDEEF8')
         break
-      case 'secondary':
-        setBgColor('#74788D')
-        setTextColor('#FFFFFB')
-        break
+        case 'secondary':
+          setBgColor('#74788D')
+          setTextColor('#FFFFFB')
+          break
       case 'success':
         setBgColor('#2AB57D')
         setTextColor('#FFFFFB')
         break
-      case 'danger':
-        setBgColor('#FD625E')
-        setTextColor('#FFFFFB')
+        case 'danger':
+          setBgColor('#FD625E')
+          setTextColor('#FFFFFB')
+          setAltColor('#FFEFEF')
         break
       case 'warning':
         setBgColor('#FFBF53')
@@ -79,13 +111,22 @@ const Button = (props) => {
         setBgColor('#343A40')
         setTextColor('#FFFFFB')
         break
+      case 'link':
+        setBgColor('#FFF')
+        setTextColor('#B67BBE')
+        break
       default:
         setBgColor('#5156BE')
         setTextColor('#FFFFFB')
     }
   }
   return (
-    <Btn {...props} bgColor={bgColor} textColor={textColor}>
+    <Btn
+      {...props}
+      bgColor={bgColor}
+      textColor={textColor}
+      altColor={altColor}
+    >
       {props.children}
     </Btn>
   )
