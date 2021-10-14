@@ -1,6 +1,8 @@
+import React, { useState } from 'react'
 import './App.css';
 import Alert from './components/Base/Components/Alert'
 import styled from 'styled-components'
+import { themes, ThemeContext } from './utils/theme'
 
 const AlertWrapper = styled.div`
   display: block;
@@ -12,12 +14,20 @@ const AlertWrapper = styled.div`
   padding: 10px;
 `;
 
-function App() {
+const App = () => {
+
+  const [theme, setTheme] = useState(themes.light)
+
+  const changeTheme = () => {
+    setTheme(theme === themes.light ? themes.dark : themes.light)
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        
-      </header>
+      <ThemeContext.Provider value={theme}>
+        <header className="App-header"></header>
+        <button onClick={changeTheme}> Change Theme</button>
+      </ThemeContext.Provider>
       <AlertWrapper>
         <Alert
           message={(

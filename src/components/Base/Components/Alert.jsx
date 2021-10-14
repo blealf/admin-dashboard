@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import styled from 'styled-components'
+import { ThemeContext } from '../../../utils/theme'
 // import { Transition } from 'react-transition-group';
 import '../../../assets/css/base/main.scss'
 
@@ -34,13 +35,13 @@ const Alert = ({ message, type, dismiss, timeout }) => {
 
   const [textColor, setTextColor] = useState()
   const [bgColor, setBgColor] = useState()
-  const [duration, setDuration] = useState(6000)
+  const [duration] = useState(timeout || 6000)
+  const context = useContext(ThemeContext)
 
   const alertRef = useRef()
 
   useEffect(() => {
     selectColor(type)
-    if (timeout) setDuration(timeout)
     setTimeout(() => {
       alertRef.current.style.right = '10px'
     }, 400);
@@ -109,6 +110,7 @@ const Alert = ({ message, type, dismiss, timeout }) => {
       textColor={textColor}
       bgColor={bgColor}
       ref={alertRef}
+      theme={context}
     >
       <Content>
         {message}
