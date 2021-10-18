@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import styled, { css } from 'styled-components'
+import { AlertContext } from '../../../utils/toasterAlert'
 
 const Btn = styled.button`
   position: relative;
@@ -63,13 +64,13 @@ const Btn = styled.button`
     z-index: 2;
   }
 `
-console.log(css)
 
 const Button = (props) => {
 
   const [bgColor, setBgColor] = useState()
   const [textColor, setTextColor] = useState()
   const [altColor, setAltColor] = useState()
+  const toaster = useContext(AlertContext).toaster
 
   useEffect(() => {
     selectColor(props.type)
@@ -126,6 +127,7 @@ const Button = (props) => {
       bgColor={bgColor}
       textColor={textColor}
       altColor={altColor}
+      onClick={() => toaster({message: "this is me"}, true)}
     >
       {props.children}
     </Btn>

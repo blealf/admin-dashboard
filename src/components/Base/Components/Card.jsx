@@ -51,7 +51,7 @@ const CardFooter = styled.div`
 
 const Card = (props) => {
   const context = useContext(ThemeContext)
-  console.log(context.textColor)
+  // console.log(context.textColor)
 
   const renderHeader = () => {
     return props.image

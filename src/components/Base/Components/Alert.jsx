@@ -31,28 +31,33 @@ const Dismiss = styled.div`
 <style>
 
 </style>
-const Alert = ({ message, type, dismiss, timeout }) => {
+const Alert = ({ remove, show, message, type, dismiss, timeout }) => {
 
   const [textColor, setTextColor] = useState()
   const [bgColor, setBgColor] = useState()
   const [duration] = useState(timeout || 6000)
+  const [showAlert, setShowAlert] = useState(false)
   const context = useContext(ThemeContext)
   const alertRef = useRef()
 
   useEffect(() => {
+    if (!show) return
+    setShowAlert(show)
     selectColor(type)
     setTimeout(() => {
       alertRef.current.style.right = '10px'
-    }, 400);
+    }, 50);
     setTimeout(() => {
       if (!dismiss) {
         close()
         setTimeout(() => {
           alertRef.current.style.display = 'none'
+          setShowAlert(false)
         }, 300)
       }
     }, duration)
-  }, [type, dismiss, duration, timeout])
+    return () => {console.log('unmounting...')}
+  }, [remove, show, message, type, dismiss, duration, timeout])
 
   const selectColor = (value) => {
     switch (value) {
@@ -105,17 +110,23 @@ const Alert = ({ message, type, dismiss, timeout }) => {
   }
 
   return (
-    <AlertButton
-      textColor={textColor}
-      bgColor={bgColor}
-      ref={alertRef}
-      theme={context}
-    >
-      <Content>
-        {message}
-        {setDismiss()}
-      </Content>
-    </AlertButton>
+    <>
+      {
+        (showAlert) ? (
+          <AlertButton
+            textColor={textColor}
+            bgColor={bgColor}
+            ref={alertRef}
+            theme={context}
+          >
+            <Content>
+              {message}
+              {setDismiss()}
+            </Content>
+          </AlertButton>
+        ) : null
+      }
+    </>
   )
 }
 
