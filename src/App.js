@@ -1,13 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { v4 as uuidV4 } from 'uuid'
 import './App.css';
 import Alert from './components/Base/Components/Alert'
 import Button from './components/Base/Components/Button'
 import Card from './components/Base/Components/Card'
 import styled from 'styled-components'
 import { themes, ThemeContext } from './utils/theme'
-import {AlertContext} from './utils/toasterAlert'
+import { AlertContext } from './utils/toasterAlert'
 // import { BsCheckAll, BsFillBellFill, BsFillCameraFill } from 'react-icons/bs'
-
 const AlertWrapper = styled.div`
   display: block;
   position: absolute;
@@ -28,8 +28,17 @@ const App = () => {
   }
 
   const triggerAlert = (data, show) => {
+    const removeAlert = (id) => {
+      setAlertArray(alertArray.filter(alert => alert.id !== id))
+      console.log(alertArray.filter(alert => alert.id !== id))
+    }
+    // const remove()
+    const id = `${uuidV4()} ${Date.now()}`
     setAlertArray([...alertArray,
-      (<Alert key={data.message} {...data} show={show}></Alert>)
+      {
+        id,
+        alert: <Alert id={id} key={id} {...data} show={show} remove={removeAlert}></Alert>
+      }
     ])
   }
 
@@ -39,10 +48,21 @@ const App = () => {
         <AlertContext.Provider value={{ toaster: triggerAlert }}>
           <header className="App-header"></header>
           <button onClick={changeTheme}> Change Theme</button>
-          <button onClick={triggerAlert}> Show Alert</button>
-          <Button triggerAlert={triggerAlert} type="primary">Primary</Button>
+          <button onClick={() => triggerAlert(
+            { message: "Well, i think you got it all wrong and it is so true", type: "danger", dismiss: true },
+            true
+          )}> Show Alert</button>
+          <button onClick={() => triggerAlert(
+            { message: "Well, i think you got it all and it is so true", type: "success", dismiss: true },
+            true
+          )}> Show Alert</button>
+          <button onClick={() => triggerAlert(
+            { message: "Well, i think may have it all wrong and it is so true", type: "alert", dismiss: true },
+            true
+          )}> Show Alert</button>
+          <Button type="primary">Primary</Button>
           <AlertWrapper id="toasterContainer">
-            {alertArray}
+            {alertArray.map(item => item.alert)}
           </AlertWrapper>
         </AlertContext.Provider>
         <Card

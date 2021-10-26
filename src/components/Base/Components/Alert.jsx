@@ -1,17 +1,20 @@
-import React, { useState, useEffect, useRef, useContext } from 'react'
+import React, { useState, useEffect, useRef, useContext, useCallBack } from 'react'
 import styled from 'styled-components'
+import { selectAlertColor } from '../../../utils/colors'
 import { ThemeContext } from '../../../utils/theme'
 // import { Transition } from 'react-transition-group';
 import '../../../assets/css/base/main.scss'
 
 const AlertButton = styled.button`
+  clip-path: polygon(5% 0, 99% 0%, 95% 99%, 0% 99%);
   z-index: 99;
   display: block;
   position: relative;
   margin-bottom: 10px;
   right: -300px;
-  padding: 12px;
-  border: 1px solid ${props => props.textColor};
+  padding: 12px 20px;
+  ${'' /* border: 1px solid ${props => props.textColor}; */}
+  border: none;
   background: ${props => props.bgColor};
   color: ${props => props.textColor};
   border-radius: 3px;
@@ -22,6 +25,7 @@ const AlertButton = styled.button`
 
 const Content = styled.div`
   display: flex;
+  gap: 10px;
 `;
 const Dismiss = styled.div`
   display: block;
@@ -31,15 +35,15 @@ const Dismiss = styled.div`
 <style>
 
 </style>
-const Alert = ({ remove, show, message, type, dismiss, timeout }) => {
-
-  const [textColor, setTextColor] = useState()
-  const [bgColor, setBgColor] = useState()
+const Alert = ({ id, remove, show, message, type, dismiss, timeout }) => {
+  const [alertColor, setAlertColor] = useState(selectAlertColor())
   const [duration] = useState(timeout || 6000)
   const [showAlert, setShowAlert] = useState(false)
   const context = useContext(ThemeContext)
   const alertRef = useRef()
 
+  
+  
   useEffect(() => {
     if (!show) return
     setShowAlert(show)
@@ -57,71 +61,30 @@ const Alert = ({ remove, show, message, type, dismiss, timeout }) => {
       }
     }, duration)
     return () => {console.log('unmounting...')}
-  }, [remove, show, message, type, dismiss, duration, timeout])
-
+  }, [show, type, dismiss, duration])
+  
   const selectColor = (value) => {
-    switch (value) {
-      case 'primary':
-        setBgColor('#B9BBE5')
-        setTextColor('#393C85')
-        break
-      case 'secondary':
-        setBgColor('#C7C9D1')
-        setTextColor('#6B5486')
-        break
-      case 'success':
-        setBgColor('#AAE1CB')
-        setTextColor('#667F88')
-        break
-      case 'danger':
-        setBgColor('#FEC0BF')
-        setTextColor('#B14542')
-        break
-      case 'alert':
-        setBgColor('#FFE5BA')
-        setTextColor('#EBAF5F')
-        break
-      case 'info':
-        setBgColor('#B7DBF9')
-        setTextColor('#5B74B9')
-        break
-      case 'light-alert':
-        setBgColor('#F6F6F9')
-        setTextColor('#C0ABA7')
-        break
-      case 'dark-alert':
-        setBgColor('#AEB0B3')
-        setTextColor('#24507F')
-        break
-      default:
-        setBgColor('#93c9ff')
-        setTextColor('#2d6399')
-    }
+    setAlertColor(selectAlertColor(value))
   }
-
-  const setDismiss = () => {
-    if(dismiss) {
-      return <Dismiss onClick={close}>X</Dismiss>
-    }
-  }
-
+  
   const close = () => {
-    alertRef.current.style.right =  `${-(alertRef.current.offsetWidth + 50)}px`
+    alertRef.current.style.right = `${-(alertRef.current.offsetWidth + 50)}px`
+    if (dismiss) remove(id)
   }
-
+  
   return (
     <>
       {
         (showAlert) ? (
           <AlertButton
-            textColor={textColor}
-            bgColor={bgColor}
+            textColor={alertColor.textColor}
+            bgColor={alertColor.bgColor}
             ref={alertRef}
             theme={context}
           >
             <Content>
               {message}
-              {setDismiss()}
+              {dismiss ? (<Dismiss onClick={close}>X</Dismiss>) : null}
             </Content>
           </AlertButton>
         ) : null
@@ -130,4 +93,4 @@ const Alert = ({ remove, show, message, type, dismiss, timeout }) => {
   )
 }
 
-export default Alert
+export default React.memo(Alert)
